@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.next/
+*.log
+
+# Local data / uploaded documents must never be committed (POPIA: ID numbers,
+# salaries, bank details live in these files).
+/data/
+*.sqlite
+*.sqlite-journal
+uploads/
