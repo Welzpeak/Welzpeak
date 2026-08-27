@@ -42,6 +42,44 @@ never assume it.
 The ordinary rate is likewise **stored rounded**. R91.35, not the R91.3461538 that
 `16625 × 12 ÷ 2184` actually produces. Carry `ordinary_rate_rounding: 'round_2cents'`.
 
+### 1.3 Calculation order — round before applying the multiplier
+
+Derived by testing both models against the overtime fixtures. Payroll computes:
+
+```
+line_amount = round( round(decimal_hours × ordinary_rate, 2) × multiplier, 2 )
+```
+
+**Not** `decimal_hours × (ordinary_rate × multiplier)`. The difference is 8 cents per overtime
+line, and only the first model fits the data:
+
+| Period | Hours | Model A `h × (r × 1.5)` | Model B `round(h × r) × 1.5` | Actually paid |
+|---|---|---|---|---|
+| Mar 2026 | 17.22 | 2,359.66 | **2,359.58** | 2,359.58 |
+| Apr 2026 | 17.45 | 2,391.17 | **2,391.09** | 2,391.09 |
+
+Model B is the config default. Add `calculation_order: 'round_base_then_multiply'` to
+`EmployerConfig` — another employer may well do it the other way, and an 8 cent variance
+reported as a finding would be embarrassing.
+
+### 1.4 Full reconciliation result
+
+All seven timecard-payslip pairs were reconciled under the corrected model. Sixteen line items.
+**Fifteen tie to zero cents. Only the three December 2025 codes vary.**
+
+```
+2025-12 → 2026-01  1193  26.80 hrs   expected 2448.18   paid 2418.95   short 29.23
+2025-12 → 2026-01  1194  20.77 hrs   expected 1897.34   paid 1869.02   short 28.32
+2025-12 → 2026-01  1181  15.40 hrs   expected 2110.19   paid 2088.26   short 21.93
+                                                              TOTAL SHORTFALL  79.48
+```
+
+R79.48 exactly, matching the figure in the submitted query letter. December's 1181 line is
+itself correctly *calculated* — `round(15.24 × 91.35) × 1.5 = 2088.26` — which confirms the
+fault is purely in the hours value carried into payroll, not in the arithmetic applied to it.
+That distinction matters: it is a data-transfer fault, not a formula fault, and the letter
+should not be read as alleging otherwise.
+
 ---
 
 ## 2. Document structure
@@ -155,7 +193,7 @@ ordinary_rate = round(pensionable_basic × 12 ÷ 2184, 2)
 |---|---|---|---|
 | 1193 | Sunday Time | 1.0 | 2418.95 ÷ 91.35 = 26.48 |
 | 1194 | PPH Worked | 1.0 | 1869.02 ÷ 91.35 = 20.46 |
-| 1181 | Overtime 1.5 | 1.5 | 2088.26 ÷ 15.24 = 137.02 = 91.35 × 1.5 |
+| 1181 | Overtime 1.5 | 1.5 | round(15.24 × 91.35) × 1.5 = 1392.17 × 1.5 = 2088.26 |
 
 Codes 1193 and 1194 are **premium supplements** paid on top of normal hours, not full
 replacement rates. That is why the multiplier is 1.0. Do not "correct" this to 2.0.
@@ -176,12 +214,16 @@ Then, once step 4 exists, the full slice must produce:
 ```
 1193  expected 26.80 × 91.35 = 2448.18   paid 2418.95   short 29.23
 1194  expected 20.77 × 91.35 = 1897.34   paid 1869.02   short 28.32
-1181  expected 15.40 × 137.03 = 2110.19  paid 2088.26   short 21.93
-                                                  total 79.48
+1181  expected round(15.40 × 91.35) × 1.5 = 2110.19   paid 2088.26   short 21.93
+                                                             total 79.48
 ```
 
-**Do not hardcode 79.48.** If the engine derives 79.47 the rounding convention is off by one
-step, and finding that is the point of the test.
+**Do not hardcode 79.48.** Two independent conventions must both be right to reach it — 2dp
+hours rounding (§1.2) and round-before-multiply (§1.3). If the engine derives 79.47 or 79.71,
+one of them is wrong, and catching that is the point of the test.
+
+The other fifteen line items across the seven pairs must reconcile to **zero**. A model that
+produces findings everywhere is not detecting errors, it is mis-modelling the employer.
 
 ### Corroboration test
 
