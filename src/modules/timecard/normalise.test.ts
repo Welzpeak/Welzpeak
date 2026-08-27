@@ -1,49 +1,38 @@
 import { describe, expect, it } from 'vitest';
-import { normaliseTimecardLine, normaliseTimecardLines } from './normalise.js';
-import type { RawTimecardLine } from './types.js';
+import { normaliseTimecardTotal, normaliseTimecardTotals } from './normalise.js';
+import type { RawTimecardTotal } from './types.js';
 
-/**
- * NOTE: these rows are a SYNTHETIC stand-in for parser output. They are NOT the
- * real SAA timecard — the actual PDF layout has not been provided yet, so the
- * concrete parser is deliberately not built. These tests prove the normalise
- * stage attaches correct integer minutes to whatever rows a parser emits.
- */
-const sampleRows: RawTimecardLine[] = [
-  { pay_code: '1193', description: 'Sunday Time', raw_total: '26:48' },
-  { pay_code: '1200', description: 'Overtime', raw_total: '8:30' },
+const sampleTotals: RawTimecardTotal[] = [
+  { label: 'Sunday Time', raw_total: '26:48' },
+  { label: 'Overtime 1.5', raw_total: '15:24' },
 ];
 
-describe('normaliseTimecardLine', () => {
+describe('normaliseTimecardTotal', () => {
   it('attaches canonical integer minutes without altering printed fields', () => {
-    const line = normaliseTimecardLine(sampleRows[0]!);
-    expect(line).toEqual({
-      pay_code: '1193',
-      description: 'Sunday Time',
+    expect(normaliseTimecardTotal(sampleTotals[0]!)).toEqual({
+      label: 'Sunday Time',
       raw_total: '26:48',
       total_minutes: 1608,
     });
   });
 
   it('propagates the hh:mm refusal for a decimal-shaped total', () => {
-    expect(() =>
-      normaliseTimecardLine({ pay_code: '1193', description: 'Sunday Time', raw_total: '26.48' }),
-    ).toThrow();
+    expect(() => normaliseTimecardTotal({ label: 'Sunday Time', raw_total: '26.48' })).toThrow();
   });
 });
 
-describe('normaliseTimecardLines', () => {
-  it('normalises every row', () => {
-    const lines = normaliseTimecardLines(sampleRows);
-    expect(lines.map((l) => l.total_minutes)).toEqual([1608, 510]);
+describe('normaliseTimecardTotals', () => {
+  it('normalises every entry', () => {
+    expect(normaliseTimecardTotals(sampleTotals).map((t) => t.total_minutes)).toEqual([1608, 924]);
   });
 
-  it('returns an empty array for no rows', () => {
-    expect(normaliseTimecardLines([])).toEqual([]);
+  it('returns an empty array for no entries', () => {
+    expect(normaliseTimecardTotals([])).toEqual([]);
   });
 
-  it('does not mutate the input rows', () => {
-    const before = JSON.parse(JSON.stringify(sampleRows));
-    normaliseTimecardLines(sampleRows);
-    expect(sampleRows).toEqual(before);
+  it('does not mutate the input', () => {
+    const before = JSON.parse(JSON.stringify(sampleTotals));
+    normaliseTimecardTotals(sampleTotals);
+    expect(sampleTotals).toEqual(before);
   });
 });

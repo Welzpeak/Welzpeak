@@ -1,0 +1,59 @@
+{
+  "_note": "Golden timecard totals from STEP2_TIMECARD_PARSER.md section 3, as printed hh:mm. '0:00' denotes a category absent from the block (absent = zero worked, not missing). These are the expected parser outputs; the real .pdf archives are the binary regression suite and should be committed under fixtures/timecards/ when available.",
+  "2025-12": {
+    "Monthly Expected Hrs": "186:00",
+    "Normal Hours": "138:26",
+    "Overtime 1.5": "15:24",
+    "PPH Worked Hours": "20:46",
+    "Sunday Time": "26:48",
+    "Day Off Taken": "4:00"
+  },
+  "2026-01": {
+    "Monthly Expected Hrs": "186:00",
+    "Normal Hours": "109:55",
+    "Overtime 1.5": "0:00",
+    "PPH Worked Hours": "6:59",
+    "Sunday Time": "22:55",
+    "Day Off Taken": "6:00"
+  },
+  "2026-02": {
+    "Monthly Expected Hrs": "168:00",
+    "Normal Hours": "123:22",
+    "Overtime 1.5": "0:00",
+    "PPH Worked Hours": "0:00",
+    "Sunday Time": "21:52",
+    "Day Off Taken": "4:00"
+  },
+  "2026-03": {
+    "Monthly Expected Hrs": "186:00",
+    "Normal Hours": "149:15",
+    "Overtime 1.5": "17:13",
+    "PPH Worked Hours": "9:57",
+    "Sunday Time": "26:48",
+    "Day Off Taken": "4:00"
+  },
+  "2026-04": {
+    "Monthly Expected Hrs": "180:00",
+    "Normal Hours": "139:16",
+    "Overtime 1.5": "17:27",
+    "PPH Worked Hours": "20:19",
+    "Sunday Time": "20:25",
+    "Day Off Taken": "5:00"
+  },
+  "2026-05": {
+    "Monthly Expected Hrs": "186:00",
+    "Normal Hours": "118:01",
+    "Overtime 1.5": "0:00",
+    "PPH Worked Hours": "7:12",
+    "Sunday Time": "30:40",
+    "Day Off Taken": "5:00"
+  },
+  "2026-06": {
+    "Monthly Expected Hrs": "180:00",
+    "Normal Hours": "124:35",
+    "Overtime 1.5": "0:00",
+    "PPH Worked Hours": "6:10",
+    "Sunday Time": "20:49",
+    "Day Off Taken": "6:00"
+  }
+}

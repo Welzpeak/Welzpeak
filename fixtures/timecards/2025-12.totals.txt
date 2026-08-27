@@ -1,0 +1,9 @@
+Totals
+Span by All   Group by All
+South African Airways/… Jnr Op - Check in. Board… Day Off Taken          4:00
+South African Airways/… Jnr Op - Check in. Board… Monthly Expected Hrs 186:00
+South African Airways/… Jnr Op - Check in. Board… Normal Hours         138:26
+South African Airways/… Jnr Op - Check in. Board… Overtime 1.5          15:24
+South African Airways/… Jnr Op - Check in. Board… PPH Worked Hours      20:46
+South African Airways/… Jnr Op - Check in. Board… Sunday Time           26:48
+South African Airways/… Jnr Op - Check in. Board… Total Actual Hrs+Leave 186:00

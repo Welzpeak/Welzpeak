@@ -1,21 +1,21 @@
 import { hhmmToMinutes } from './hhmm.js';
-import type { RawTimecardLine, TimecardLine } from './types.js';
+import type { RawTimecardTotal, TimecardTotal } from './types.js';
 
 /**
- * The "normalise" stage for timecards: take rows a parser has separated into
- * pay_code / description / raw_total and attach canonical integer minutes.
- *
- * This is deliberately layout-agnostic. The employer-specific work of finding
- * those rows in a PDF lives in the parser; this function only fixes the hh:mm
+ * The "normalise" stage for timecards: attach canonical integer minutes to a
+ * totals-block entry. Layout-agnostic — the employer-specific work of finding
+ * the totals in the archive lives in the parser; this only fixes the hh:mm
  * format quirk, so it is reusable across every timecard layout.
  */
-export function normaliseTimecardLine(raw: RawTimecardLine): TimecardLine {
+export function normaliseTimecardTotal(raw: RawTimecardTotal): TimecardTotal {
   return {
     ...raw,
     total_minutes: hhmmToMinutes(raw.raw_total),
   };
 }
 
-export function normaliseTimecardLines(raws: readonly RawTimecardLine[]): TimecardLine[] {
-  return raws.map(normaliseTimecardLine);
+export function normaliseTimecardTotals(
+  raws: readonly RawTimecardTotal[],
+): TimecardTotal[] {
+  return raws.map(normaliseTimecardTotal);
 }
