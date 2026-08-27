@@ -52,12 +52,17 @@ export interface Finding {
   period: string;
   /** Human-readable summary of what is wrong. */
   description: string;
-  /** What should have been paid, in integer cents. */
+  /**
+   * The correct value the rule computed. UNIT IS RULE-DEFINED: for a money
+   * rule it is integer cents (R2,448.18 -> 244818); for `hhmm_decimal_conversion`
+   * it is the correct decimal hours (26.80). Whatever the unit, `expected` and
+   * `actual` always share it, and `rand_impact` is the money consequence.
+   */
   expected: number;
-  /** What was actually paid, in integer cents. */
+  /** The value observed on the document, in the same unit as `expected`. */
   actual: number;
   /**
-   * The recoverable amount, in integer cents. A positive value is an
+   * The recoverable amount, ALWAYS in integer cents. A positive value is an
    * underpayment (money owed to the employee). Sequencing orders by this.
    */
   rand_impact: number;
